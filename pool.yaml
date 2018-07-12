@@ -8,8 +8,8 @@
       - name: Create Pool
         bigip_pool:
             lb_method: least-connections-member
-            user: "{{ ansible_user }}"
-            password: "{{ ansible_password }}"
+            user: COF5ADMN01
+            password: Yi[ZuS%XH6[tyP{
             name: ansible-test123
             monitors:
               - https
