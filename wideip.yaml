@@ -1,17 +1,36 @@
 ---
-
-- name: Create a vip
+- name: create pool
   hosts: bigips
   connection: local
+
   tasks:
-      - name: Create an GTM Pool
-        bigip_gtm_pool:
-            server: "{{ inventory_hostname }}"
-            user: "{{ ansible_user }}"
-            password: "{{ ansible_password }}"
-            name: wips
-            state: present
-            type: a
-            partition: /Common/
-            validate_certs: false
-        delegate_to: localhost      
+  - name: Create Pool and Node
+    uri:
+      url: https://{{ inventory_hostname }}/mgmt/tm/ltm/pool
+      validate_certs: no
+      method: POST
+      user: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+      body: {"name":"bdt03.partnersonline.com", "partition":"Common", "monitor": "/Common/http", "members":[{"name":"172.17.59.52:443","address":"172.17.59.52"}]}
+      return_content: yes
+      body_format: json
+    register: pool 
+
+  - name: Create a VIP_443
+    bigip_virtual_server:
+      user: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+      description: bdt03.partnersonline.com
+      destination: 161.225.68.172
+      name: bdt03.partnersonline.com_443_ttc
+      pool: bdt03.partnersonline.com
+      port: 443
+      server: "{{ inventory_hostname }}"
+      all_profiles:
+           - http
+           - clientssl
+           - serverssl
+      enabled_vlans:
+           - /Common/VLANC1797     
+      validate_certs: false
+    delegate_to: localhost     
