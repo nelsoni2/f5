@@ -1,17 +1,17 @@
 ---
-- name: Simple POST
+- name: create pool
   hosts: bigips
   connection: local
 
   tasks:
-  - name: Create pool
+  - name: Create Pool and Node
     uri:
       url: https://{{ inventory_hostname }}/mgmt/tm/ltm/pool
       validate_certs: no
-      method: PATCH
+      method: POST
       user: "{{ ansible_user }}"
       password: "{{ ansible_password }}"
-      body: {"name":"redcard-paper-stage.target.com", "partition":"Common", "monitor": "/Common/https", "members":[{"name":"10.68.129.91:443","address":"10.68.129.91"}]}
+      body: {"name":"ADN-Test", "partition":"Common", "monitor": "/Common/http", "members":[{"name":"172.17.59.52:443","address":"172.17.59.52"}]}
       return_content: yes
       body_format: json
-    register: pool     
+    register: pool    
