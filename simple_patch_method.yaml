@@ -1,0 +1,17 @@
+---
+- name: Simple PATCH
+  hosts: bigips
+  connection: local
+
+  tasks:
+  - name: Change loadBalancingMode
+    uri:
+      url: https://{{ inventory_hostname }}/mgmt/tm/ltm/pool/~Common~nel
+      validate_certs: no
+      method: PATCH
+      user: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+      body: {"loadBalancingMode": "round-robin","slowRampTime": 111}
+      return_content: yes
+      body_format: json
+    register: snmp      
