@@ -1,0 +1,17 @@
+---
+- name: Simple POST
+  hosts: bigips
+  connection: local
+
+  tasks:
+  - name: Create pool
+    uri:
+      url: https://{{ inventory_hostname }}/mgmt/tm/ltm/pool
+      validate_certs: no
+      method: PATCH
+      user: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+      body: {"name":"redcard-paper-stage.target.com", "partition":"Common", "monitor": "/Common/https", "members":[{"name":"10.68.129.91:443","address":"10.68.129.91"}]}
+      return_content: yes
+      body_format: json
+    register: pool     
