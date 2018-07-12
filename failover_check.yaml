@@ -8,7 +8,7 @@
 ###### https://github.com/npearce/F5-iApps_and_Ansible-playbooks ######
 
 - name: F5 BIG-IP failover-status
-  hosts: bigip
+  hosts: bigips
   connection: local
   gather_facts: no
   tasks:
