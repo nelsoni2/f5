@@ -1,36 +1,17 @@
 ---
-- name: create pool
+- name: create vip
   hosts: bigips
   connection: local
 
   tasks:
-  - name: Create Pool and Node
+  - name: Create VIP
     uri:
-      url: https://{{ inventory_hostname }}/mgmt/tm/ltm/pool
+      url: https://{{ inventory_hostname }}/mgmt/tm/ltm/virtual
       validate_certs: no
       method: POST
       user: "{{ ansible_user }}"
       password: "{{ ansible_password }}"
-      body: {"name":"bdt03.partnersonline.com", "partition":"Common", "monitor": "/Common/http", "members":[{"name":"172.17.59.52:443","address":"172.17.59.52"}]}
+      body: {"name": "redcard-paper-stage.target.com_80_ttc","mask": "255.255.255.255","destination": "/Common/10.68.113.209:80","enabled": true,"ipProtocol": "tcp","source": "0.0.0.0/0","vlans": ["/Common/VLANC1797"],"vlansEnabled": "true","pool": "/Common/nel","profiles":[{"name": "tcp"},{"name": "tcp","context": "all"}]}
       return_content: yes
       body_format: json
-    register: pool 
-
-  - name: Create a VIP_443
-    bigip_virtual_server:
-      user: "{{ ansible_user }}"
-      password: "{{ ansible_password }}"
-      description: bdt03.partnersonline.com
-      destination: 161.225.68.172
-      name: bdt03.partnersonline.com_443_ttc
-      pool: bdt03.partnersonline.com
-      port: 443
-      server: "{{ inventory_hostname }}"
-      all_profiles:
-           - http
-           - clientssl
-           - serverssl
-      enabled_vlans:
-           - /Common/VLANC1797     
-      validate_certs: false
-    delegate_to: localhost     
+    register: virtual     
