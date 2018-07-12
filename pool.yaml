@@ -4,14 +4,16 @@
   hosts: bigips
   connection: local
   tasks:
-      - name: Create an GTM Pool
-        bigip_gtm_pool:
-            server: "{{ inventory_hostname }}"
+
+      - name: Create Pool
+        bigip_pool:
+            lb_method: least-connections-member
             user: "{{ ansible_user }}"
             password: "{{ ansible_password }}"
-            name: wips
-            state: present
-            type: a
-            partition: /Common/
+            name: ansible-test123
+            monitors:
+              - https
+            slow_ramp_time: 120
+            server: "{{ inventory_hostname }}"
             validate_certs: false
-        delegate_to: localhost      
+        delegate_to: localhost     
