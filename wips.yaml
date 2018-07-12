@@ -1,7 +1,7 @@
 ---
 
 - name: Create a vip
-  hosts: bigip
+  hosts: bigips
   connection: local
   tasks:
       - name: Create an GTM Pool
