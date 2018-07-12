@@ -1,19 +1,17 @@
 ---
-
-- name: Create a vip
+- name: create pool
   hosts: bigips
   connection: local
-  tasks:
 
-      - name: Create Pool
-        bigip_pool:
-            lb_method: least-connections-member
-            user: COF5ADMN01
-            password: Yi[ZuS%XH6[tyP{
-            name: ansible-test123
-            monitors:
-              - https
-            slow_ramp_time: 120
-            server: "{{ inventory_hostname }}"
-            validate_certs: false
-        delegate_to: localhost     
+  tasks:
+  - name: Create Pool and Node
+    uri:
+      url: https://{{ inventory_hostname }}/mgmt/tm/ltm/pool
+      validate_certs: no
+      method: POST
+      user: "{{ ansible_user }}"
+      password: "{{ ansible_password }}"
+      body: {"name":"bdt03.partnersonline.com", "partition":"Common", "monitor": "/Common/http", "members":[{"name":"172.17.59.52:443","address":"172.17.59.52"}]}
+      return_content: yes
+      body_format: json
+    register: pool
