@@ -1,0 +1,45 @@
+---
+
+- name: Create a vip
+  hosts: bigip
+  connection: local
+  tasks:
+      - name: Create an GTM Pool
+        bigip_gtm_pool:
+            server: "{{ inventory_hostname }}"
+            user: "{{ ansible_user }}"
+            password: "{{ ansible_password }}"
+            name: wips
+            state: present
+            type: a
+            partition: /Common/
+            validate_certs: false
+        delegate_to: localhost      
+
+
+      - name: Create an GTM Pool Member
+        bigip_gtm_pool_member:
+            user: "{{ ansible_user }}"
+            password: "{{ ansible_password }}"
+            pool: wips
+            state: present
+            virtual_server: /Common/T0001StoreWC
+            server_name:  ttbnlbpoc91
+            type: a
+            server: "{{ inventory_hostname }}"
+            validate_certs: false
+        delegate_to: localhost 
+
+      - name: Create an GTM wideip
+        bigip_gtm_wide_ip:
+            user: "{{ ansible_user }}"
+            password: "{{ ansible_password }}"
+            name: wips.target.com
+            pools: 
+              - name: wips
+            type: a
+            pool_lb_method: round-robin
+            state: present
+            server: "{{ inventory_hostname }}"
+            validate_certs: false
+        delegate_to: localhost                    
