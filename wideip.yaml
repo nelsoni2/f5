@@ -1,0 +1,17 @@
+---
+
+- name: Create a vip
+  hosts: bigips
+  connection: local
+  tasks:
+      - name: Create an GTM Pool
+        bigip_gtm_pool:
+            server: "{{ inventory_hostname }}"
+            user: "{{ ansible_user }}"
+            password: "{{ ansible_password }}"
+            name: wips
+            state: present
+            type: a
+            partition: /Common/
+            validate_certs: false
+        delegate_to: localhost      
